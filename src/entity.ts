@@ -1,5 +1,5 @@
 import { ObjectLiteral, getMetadataArgsStorage } from 'typeorm';
-import { ExtendedColumnOptions } from './options';
+import { EncryptionOptions, ExtendedColumnOptions } from './options';
 import { decryptData, encryptData } from './crypto';
 
 /**
@@ -15,7 +15,10 @@ export function encrypt<T extends ObjectLiteral>(entity: any): any {
     let options: ExtendedColumnOptions = columnMetadata.options;
     let encrypt = options.encrypt;
     if (
-      encrypt && !(encrypt?.encryptionPredicate && !encrypt?.encryptionPredicate(entity)) &&
+      encrypt &&
+      !(
+        encrypt?.encryptionPredicate && !encrypt?.encryptionPredicate(entity)
+      ) &&
       mode === 'regular' &&
       (encrypt.looseMatching || entity.constructor === target)
     ) {
@@ -30,6 +33,14 @@ export function encrypt<T extends ObjectLiteral>(entity: any): any {
   return entity;
 }
 
+const getDecryptedValue = (value: string, options: EncryptionOptions) => {
+  try {
+    return decryptData(Buffer.from(value, 'base64'), options).toString('utf8');
+  } catch {
+    return value;
+  }
+};
+
 /**
  * Decrypt fields on entity.
  */
@@ -43,15 +54,15 @@ export function decrypt<T extends ObjectLiteral>(entity: any): any {
     let options: ExtendedColumnOptions = columnMetadata.options;
     let encrypt = options.encrypt;
     if (
-      encrypt && !(encrypt?.encryptionPredicate && !encrypt?.encryptionPredicate(entity)) &&
-      mode === "regular" &&
+      encrypt &&
+      !(
+        encrypt?.encryptionPredicate && !encrypt?.encryptionPredicate(entity)
+      ) &&
+      mode === 'regular' &&
       (encrypt.looseMatching || entity.constructor === target)
     ) {
       if (entity[propertyName]) {
-        entity[propertyName] = decryptData(
-          Buffer.from(entity[propertyName], 'base64'),
-          encrypt
-        ).toString('utf8');
+        entity[propertyName] = getDecryptedValue(entity[propertyName], encrypt);
       }
     }
   }
