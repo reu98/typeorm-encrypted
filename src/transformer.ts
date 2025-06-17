@@ -3,7 +3,7 @@ import { EncryptionOptions } from './options';
 import { decryptData, encryptData } from './crypto';
 
 export class EncryptionTransformer implements ValueTransformer {
-  constructor(private options: EncryptionOptions) {}
+  constructor(private options: EncryptionOptions) { }
 
   public from(value?: string | null): string | undefined {
     if (!value) {
@@ -64,12 +64,10 @@ export class EncryptionTransformer implements ValueTransformer {
 }
 
 export class JSONEncryptionTransformer implements ValueTransformer {
-  constructor(private options: EncryptionOptions) {}
+  constructor(private options: EncryptionOptions) { }
 
   public from(value?: null | any): any | undefined {
-    if (!value?.encrypted) {
-      return;
-    }
+    if (!value?.encrypted) return value
 
     try {
       const decrypted = decryptData(

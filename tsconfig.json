@@ -1,7 +1,11 @@
 {
   "version": "2.1.1",
   "compilerOptions": {
-    "lib": ["es5", "es6", "esnext.asynciterable"],
+    "lib": [
+      "es5",
+      "es6",
+      "esnext.asynciterable"
+    ],
     "baseUrl": "src",
     "outDir": "lib",
     "target": "es6",
@@ -20,6 +24,13 @@
     "declaration": true,
     "downlevelIteration": true
   },
-  "include": ["src", "test"],
-  "exclude": ["tmp", "temp", "lib", "node_modules"]
+  "include": [
+    "src",
+  ],
+  "exclude": [
+    "tmp",
+    "temp",
+    "lib",
+    "node_modules"
+  ]
 }
